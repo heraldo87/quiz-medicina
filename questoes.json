@@ -1,67 +1,158 @@
 [
   {
     "id": 1,
-    "area": "Cardiologia",
-    "pergunta": "Qual das seguintes artérias é mais comumente afetada na doença arterial coronariana?",
+    "area": "Saúde Pública",
+    "pergunta": "Qual é o objetivo principal do Módulo de Informação Básica (M.I.B) segundo o SNIS-VE?",
     "opcoes": [
-      "Artéria descendente anterior esquerda (DAE)",
-      "Artéria circunflexa",
-      "Artéria coronária direita",
-      "Tronco da coronária esquerda"
+      "Realizar o censo demográfico anual da Bolívia.",
+      "Gerar dados para a tomada de decisões a nível local para melhoria contínua da atenção à população.",
+      "Controlar a faturação e os custos dos hospitais de terceiro nível.",
+      "Capacitar exclusivamente o pessoal de enfermagem em emergências."
     ],
-    "respostaCorreta": "Artéria descendente anterior esquerda (DAE)",
-    "explicacao": "A DAE, também conhecida como 'artéria da viúva', é a mais comumente envolvida em infartos do miocárdio devido à sua importância na irrigação do ventrículo esquerdo."
+    "respostaCorreta": "Gerar dados para a tomada de decisões a nível local para melhoria contínua da atenção à população.",
+    "explicacao": "O M.I.B. é um instrumento de capacitação e sistematização de informação que contribui para a tomada de decisões em nível local, visando a melhoria do acesso e da atenção."
   },
   {
     "id": 2,
-    "area": "Farmacologia",
-    "pergunta": "Qual é o principal mecanismo de ação dos beta-bloqueadores?",
+    "area": "Gestão em Saúde",
+    "pergunta": "A quais níveis de atenção em saúde o M.I.B. se aplica primordialmente?",
     "opcoes": [
-      "Bloqueio dos canais de cálcio",
-      "Antagonismo competitivo dos receptores beta-adrenérgicos",
-      "Inibição da enzima conversora de angiotensina (ECA)",
-      "Aumento da excreção de sódio pelos rins"
+      "Apenas a hospitais de Terceiro e Quarto Nível.",
+      "A todos os níveis de atenção, incluindo postos de saúde e hospitais de alta complexidade.",
+      "A estabelecimentos de saúde de Primeiro e Segundo Nível de atenção.",
+      "Apenas a Centros de Saúde com regime de internação."
     ],
-    "respostaCorreta": "Antagonismo competitivo dos receptores beta-adrenérgicos",
-    "explicacao": "Beta-bloqueadores, como o propranolol e o metoprolol, atuam bloqueando os efeitos do sistema nervoso simpático nos receptores beta, reduzindo a frequência cardíaca e a pressão arterial."
+    "respostaCorreta": "A estabelecimentos de saúde de Primeiro e Segundo Nível de atenção.",
+    "explicacao": "O Módulo de Informação Básica foi projetado especificamente para sistematizar a informação dos estabelecimentos de saúde de 1º e 2º Nível."
   },
   {
     "id": 3,
-    "area": "Anatomia",
-    "pergunta": "O Forame Magno é uma abertura localizada em qual osso do crânio?",
+    "area": "Epidemiologia",
+    "pergunta": "Com que frequência a informação do M.I.B. deve ser registrada e qual o prazo final para o envio?",
     "opcoes": [
-      "Osso frontal",
-      "Osso parietal",
-      "Osso temporal",
-      "Osso occipital"
+      "Mensalmente, até o último dia de cada mês.",
+      "Semestralmente, até o final de junho e dezembro.",
+      "Anualmente, até o primeiro trimestre de cada gestão.",
+      "A cada dois anos, coincidindo com o censo local."
     ],
-    "respostaCorreta": "Osso occipital",
-    "explicacao": "O Forame Magno é a grande abertura na base do osso occipital através da qual a medula espinhal se conecta ao tronco cerebral."
+    "respostaCorreta": "Anualmente, até o primeiro trimestre de cada gestão.",
+    "explicacao": "A informação do M.I.B. é registrada uma vez ao ano e deve ser enviada até o primeiro trimestre da gestão seguinte para consolidação."
   },
   {
     "id": 4,
-    "area": "Fisiologia",
-    "pergunta": "Qual hormônio, produzido pelo pâncreas, é responsável por reduzir os níveis de glicose no sangue?",
+    "area": "Sistemas de Informação",
+    "pergunta": "Qual a ordem correta do fluxo de informação consolidada do M.I.B., desde o nível local até o nacional?",
     "opcoes": [
-      "Glucagon",
-      "Insulina",
-      "Somatostatina",
-      "Adrenalina"
+      "Estabelecimento -> SEDES -> SNIS Central -> Rede Municipal.",
+      "Estabelecimento -> Rede Municipal/de Serviços -> SEDES -> SNIS Central.",
+      "Rede Municipal -> Estabelecimento -> SNIS Central -> SEDES.",
+      "SEDES -> Estabelecimento -> Rede Municipal -> SNIS Central."
     ],
-    "respostaCorreta": "Insulina",
-    "explicacao": "A insulina facilita a absorção de glicose pelas células do corpo, principalmente nos músculos, fígado e tecido adiposo, diminuindo sua concentração na corrente sanguínea."
+    "respostaCorreta": "Estabelecimento -> Rede Municipal/de Serviços -> SEDES -> SNIS Central.",
+    "explicacao": "O ciclo da informação começa no estabelecimento, é consolidado pela rede, enviado ao SEDES departamental e, por fim, consolidado a nível nacional pelo SNIS Central."
   },
   {
     "id": 5,
-    "area": "Microbiologia",
-    "pergunta": "Qual bactéria é a principal causa de úlceras pépticas?",
+    "area": "Instrumentos de Saúde",
+    "pergunta": "O 'carnet de vacunación' e a 'historia clínica' são classificados dentro do sistema M.I.B. como que tipo de instrumento?",
     "opcoes": [
-      "Escherichia coli",
-      "Staphylococcus aureus",
-      "Helicobacter pylori",
-      "Streptococcus pneumoniae"
+      "Instrumentos de Sistematização.",
+      "Instrumentos de Capacitação.",
+      "Formulários de Dados Demográficos.",
+      "Relatórios de Gestão (Reportes)."
     ],
-    "respostaCorreta": "Helicobacter pylori",
-    "explicacao": "A H. pylori é uma bactéria que infecta o estômago e está fortemente associada ao desenvolvimento de gastrite, úlceras pépticas e até mesmo câncer gástrico."
+    "respostaCorreta": "Instrumentos de Capacitação.",
+    "explicacao": "Instrumentos que captam a informação clínica e sociodemográfica de cada paciente, como o cartão de vacina e a história clínica, são considerados 'Instrumentos de Capacitação'."
+  },
+  {
+    "id": 6,
+    "area": "Saúde Pública",
+    "pergunta": "Baseado na pirâmide de níveis de atenção da Bolívia apresentada, qual nível concentra a maior porcentagem (92%) dos estabelecimentos de saúde?",
+    "opcoes": [
+      "Segundo Nível",
+      "Terceiro Nível",
+      "Quarto Nível",
+      "Primeiro Nível"
+    ],
+    "respostaCorreta": "Primeiro Nível",
+    "explicacao": "A pirâmide mostra que 92% (3.656) dos estabelecimentos de saúde na Bolívia correspondem ao Primeiro Nível de atenção, que é a base do sistema de saúde."
+  },
+  {
+    "id": 7,
+    "area": "Gestão em Saúde",
+    "pergunta": "Para garantir a qualidade e a relevância dos dados, o que é recomendado fazer com a informação do M.I.B. a nível comunitário?",
+    "opcoes": [
+      "Manter a informação estritamente confidencial dentro do estabelecimento.",
+      "Publicar os dados brutos em jornais locais.",
+      "Consensuar a informação com representantes da comunidade (líderes, indígenas, etc.).",
+      "Enviar os dados diretamente ao nível nacional sem validação local."
+    ],
+    "respostaCorreta": "Consensuar a informação com representantes da comunidade (líderes, indígenas, etc.).",
+    "explicacao": "É recomendável consensuar a informação com líderes locais, indígenas, originários e outras organizações comunitárias para assegurar a precisão e utilidade dos dados."
+  },
+  {
+    "id": 8,
+    "area": "Sistemas de Informação",
+    "pergunta": "Quais são os instrumentos de sistematização oficiais implementados pelo SNIS e codificados como registros administrativos pelo INE?",
+    "opcoes": [
+      "As Histórias Clínicas Eletrônicas.",
+      "Os Softwares de Gestão Hospitalar.",
+      "Os Cuadernos de Registro (Ex: Caderno Nº 1, 2, 3).",
+      "Os Carnets de Saúde Familiar."
+    ],
+    "respostaCorreta": "Os Cuadernos de Registro (Ex: Caderno Nº 1, 2, 3).",
+    "explicacao": "Os 'cuadernos de registro' para consulta externa, atenção infantil, controle pré-natal, etc., são os instrumentos oficiais de sistematização do SNIS."
+  },
+  {
+    "id": 9,
+    "area": "Epidemiologia",
+    "pergunta": "'Isócronas de la Red Funcional de Salud' e 'Características de Riesgos Ambientales' são exemplos de que tipo de informação coletada?",
+    "opcoes": [
+      "Dados de Morbidade e Mortalidade (CIE-10).",
+      "Dados de Recursos Físicos e Infraestrutura.",
+      "Dados sobre acesso, geografia e riscos comunitários.",
+      "Dados sobre o Movimento Econômico do Estabelecimento."
+    ],
+    "respostaCorreta": "Dados sobre acesso, geografia e riscos comunitários.",
+    "explicacao": "Estes são exemplos dos múltiplos formulários do M.I.B. que buscam entender a área de influência do estabelecimento, incluindo o tempo de deslocamento e os riscos ambientais."
+  },
+  {
+    "id": 10,
+    "area": "Sistemas de Informação",
+    "pergunta": "O que acontece com a informação do M.I.B. em estabelecimentos que não possuem um computador?",
+    "opcoes": [
+      "Eles estão isentos de preencher o M.I.B.",
+      "O preenchimento é feito verbalmente por telefone.",
+      "Devem enviar o instrumento manual preenchido para a cabeceira da rede para introdução no software.",
+      "Devem adquirir um computador obrigatoriamente para poder reportar."
+    ],
+    "respostaCorreta": "Devem enviar o instrumento manual preenchido para a cabeceira da rede para introdução no software.",
+    "explicacao": "O ciclo da informação prevê que estabelecimentos sem computador preencham o formulário manualmente e o enviem para a coordenação da rede para digitalização."
+  },
+  {
+    "id": 11,
+    "area": "Saúde Pública",
+    "pergunta": "A consolidação da informação do M.I.B. a nível de Rede, SEDES e Nacional tem como um de seus principais objetivos a construção de quê?",
+    "opcoes": [
+      "Um ranking de melhores hospitais.",
+      "Perfis epidemiológicos de cada região.",
+      "Um novo sistema de cobrança de serviços.",
+      "Uma plataforma de telemedicina."
+    ],
+    "respostaCorreta": "Perfis epidemiológicos de cada região.",
+    "explicacao": "A coleta e consolidação desses dados têm grande valor na construção de perfis epidemiológicos regionais, que ajudam a orientar políticas de saúde pública."
+  },
+  {
+    "id": 12,
+    "area": "Gestão em Saúde",
+    "pergunta": "O M.I.B. é desenhado para sistematizar que tipo de informação dos estabelecimentos de saúde?",
+    "opcoes": [
+      "Apenas informação financeira e de recursos humanos.",
+      "Apenas dados de morbidade e mortalidade.",
+      "Informação anual, tanto setorial quanto extrassetorial.",
+      "Informação em tempo real sobre emergências."
+    ],
+    "respostaCorreta": "Informação anual, tanto setorial quanto extrassetorial.",
+    "explicacao": "O módulo é abrangente, projetado para sistematizar informação anual que inclui dados do próprio setor saúde (setorial) e de outros setores que o afetam (extrassetorial)."
   }
 ]
