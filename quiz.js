@@ -1,149 +1,128 @@
-// Seleciona os elementos do DOM
-const startButton = document.getElementById('start-btn');
-const nextButton = document.getElementById('next-btn');
-const restartButton = document.getElementById('restart-btn');
-const startScreen = document.getElementById('start-screen');
-const quizContainer = document.getElementById('quiz');
-const resultsContainer = document.getElementById('results-container');
-const questionContainer = document.getElementById('question-text');
-const questionCounterElement = document.getElementById('question-counter');
-const answerButtonsElement = document.getElementById('answer-buttons');
-const scoreElement = document.getElementById('score');
-const totalQuestionsElement = document.getElementById('total-questions');
-const detailedResultsElement = document.getElementById('detailed-results');
-
-let shuffledQuestions, currentQuestionIndex, score, userAnswers;
-
-// Adiciona os 'escutadores' de eventos
-startButton.addEventListener('click', startQuiz);
-nextButton.addEventListener('click', () => {
-    currentQuestionIndex++;
-    setNextQuestion();
-});
-restartButton.addEventListener('click', () => {
-    resultsContainer.classList.add('hide');
-    startScreen.classList.remove('hide');
-});
-
-// A função que inicia o quiz
-async function startQuiz() {
-    startScreen.classList.add('hide');
-    resultsContainer.classList.add('hide');
-    
-    let questionsData = [];
-    try {
-        // A linha mais importante: busca os dados do arquivo questoes.json
-        const response = await fetch('questoes.json');
-        if (!response.ok) {
-            throw new Error('Erro de rede: Não foi possível carregar o arquivo de questões.');
-        }
-        questionsData = await response.json();
-    } catch (error) {
-        console.error("Falha ao carregar o quiz:", error);
-        alert("Ops! Não consegui carregar as perguntas. Verifique o console para mais detalhes.");
-        startScreen.classList.remove('hide'); // Mostra a tela inicial de novo
-        return;
+// Selecionando elementos do DOM
+// Função para embaralhar um array (Fisher-Yates)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
     }
-    
-    quizContainer.classList.remove('hide');
-    
-    shuffledQuestions = questionsData.sort(() => Math.random() - 0.5);
-    currentQuestionIndex = 0;
-    score = 0;
-    userAnswers = []; 
-
-    setNextQuestion();
 }
 
-function setNextQuestion() {
+// Elementos do DOM
+const questionContainer = document.getElementById('question-container');
+const questionText = document.getElementById('question-text');
+const questionCounter = document.getElementById('question-counter');
+const answerButtons = document.getElementById('answer-buttons');
+const nextBtn = document.getElementById('next-btn');
+const resultsContainer = document.getElementById('results-container');
+const scoreText = document.getElementById('score-text');
+const restartBtn = document.getElementById('restart-btn');
+const progressBar = document.getElementById('progress-bar');
+const explanationFooter = document.getElementById('explanation-footer');
+const explanationText = document.getElementById('explanation-text');
+
+// Estado do quiz
+let currentQuestionIndex = 0;
+let score = 0;
+let shuffledQuestions = [];
+
+function startQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+
+    // Embaralha e seleciona as 20 perguntas
+    shuffledQuestions = questions.slice(); // copia
+    shuffleArray(shuffledQuestions);
+    shuffledQuestions = shuffledQuestions.slice(0, 20); // pega só 20
+
+    questionContainer.parentElement.querySelector('.text-center').classList.remove('hidden');
+    progressBar.parentElement.classList.remove('hidden');
+    questionContainer.classList.remove('hidden');
+    resultsContainer.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
     resetState();
+    const currentQuestion = shuffledQuestions[currentQuestionIndex];
+    questionText.innerText = currentQuestion.question;
+    questionCounter.innerText = `PERGUNTA ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
+
+    // Atualiza barra de progresso
+    const progressPercentage = (currentQuestionIndex / shuffledQuestions.length) * 100;
+    progressBar.style.width = `${progressPercentage}%`;
+
+    currentQuestion.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add(
+            'answer-btn', 'w-full', 'p-4', 'border-2', 'rounded-lg', 'text-left',
+            'transition-all', 'duration-300', 'text-slate-700', 'dark:text-slate-300',
+            'border-gray-300', 'dark:border-slate-600', 'hover:bg-blue-50', 'dark:hover:bg-slate-700',
+            'hover:border-blue-400', 'dark:hover:border-blue-500'
+        );
+        button.dataset.correct = answer.correct;
+        button.dataset.rationale = answer.rationale;
+        button.addEventListener('click', selectAnswer);
+        answerButtons.appendChild(button);
+    });
+}
+
+function resetState() {
+    nextBtn.classList.add('hidden');
+    explanationFooter.classList.add('hidden');
+    while (answerButtons.firstChild) {
+        answerButtons.removeChild(answerButtons.firstChild);
+    }
+}
+
+function selectAnswer(e) {
+    const selectedBtn = e.target;
+    const isCorrect = selectedBtn.dataset.correct === "true";
+
+    if (isCorrect) {
+        score++;
+    } else {
+        explanationText.innerText = selectedBtn.dataset.rationale;
+        explanationFooter.classList.remove('hidden');
+        selectedBtn.classList.add('incorrect');
+    }
+
+    // Destaca a correta e desativa todos
+    Array.from(answerButtons.children).forEach(button => {
+        if (button.dataset.correct === "true") {
+            button.classList.add('correct');
+        }
+        button.disabled = true;
+    });
+
+    // Atualiza barra de progresso
+    const progressPercentage = ((currentQuestionIndex + 1) / shuffledQuestions.length) * 100;
+    progressBar.style.width = `${progressPercentage}%`;
+
+    nextBtn.classList.remove('hidden');
+}
+
+function showResults() {
+    questionContainer.parentElement.querySelector('.text-center').classList.add('hidden');
+    progressBar.parentElement.classList.add('hidden');
+    questionContainer.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    resultsContainer.classList.remove('hidden');
+    scoreText.innerText = `Você acertou ${score} de ${shuffledQuestions.length} perguntas.`;
+}
+
+function handleNextButton() {
+    currentQuestionIndex++;
     if (currentQuestionIndex < shuffledQuestions.length) {
-        showQuestion(shuffledQuestions[currentQuestionIndex]);
+        showQuestion();
     } else {
         showResults();
     }
 }
 
-function showQuestion(question) {
-    questionContainer.innerText = question.pergunta;
-    questionCounterElement.innerText = `Questão ${currentQuestionIndex + 1} de ${shuffledQuestions.length}`;
-    
-    question.opcoes.forEach(optionText => {
-        const button = document.createElement('button');
-        button.innerText = optionText;
-        button.classList.add('btn');
-        button.addEventListener('click', selectAnswer);
-        answerButtonsElement.appendChild(button);
-    });
-}
+nextBtn.addEventListener('click', handleNextButton);
+restartBtn.addEventListener('click', startQuiz);
 
-function resetState() {
-    nextButton.classList.add('hide');
-    while (answerButtonsElement.firstChild) {
-        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
-    }
-}
-
-function selectAnswer(e) {
-    const selectedButton = e.target;
-    const currentQuestion = shuffledQuestions[currentQuestionIndex];
-    const correct = selectedButton.innerText === currentQuestion.respostaCorreta;
-
-    userAnswers[currentQuestionIndex] = {
-        question: currentQuestion.pergunta,
-        selected: selectedButton.innerText,
-        correct: currentQuestion.respostaCorreta,
-        isCorrect: correct,
-        explanation: currentQuestion.explicacao
-    };
-
-    if (correct) {
-        score++;
-    }
-    
-    setStatusClass(selectedButton, correct);
-    Array.from(answerButtonsElement.children).forEach(button => {
-        if(button.innerText === currentQuestion.respostaCorreta){
-            setStatusClass(button, true);
-        }
-        button.disabled = true;
-    });
-    
-    if(shuffledQuestions.length > currentQuestionIndex + 1) {
-        nextButton.classList.remove('hide');
-    } else {
-        setTimeout(showResults, 1200); 
-    }
-}
-
-function setStatusClass(element, correct) {
-    element.classList.remove('correct');
-    element.classList.remove('wrong');
-    if (correct) {
-        element.classList.add('correct');
-    } else {
-        element.classList.add('wrong');
-    }
-}
-
-function showResults() {
-    quizContainer.classList.add('hide');
-    resultsContainer.classList.remove('hide');
-    
-    scoreElement.innerText = score;
-    totalQuestionsElement.innerText = shuffledQuestions.length;
-    
-    detailedResultsElement.innerHTML = '';
-    userAnswers.forEach(answer => {
-        const resultItem = document.createElement('div');
-        resultItem.classList.add('result-item');
-        const answerClass = answer.isCorrect ? 'correct' : 'wrong';
-        resultItem.innerHTML = `
-            <p class="result-question">${answer.question}</p>
-            <p class="user-answer ${answerClass}">Sua resposta: ${answer.selected}</p>
-            ${!answer.isCorrect ? `<p class="correct-answer">Resposta correta: ${answer.correct}</p>` : ''}
-            <p class="explanation"><strong>Explicação:</strong> ${answer.explanation}</p>
-        `;
-        detailedResultsElement.appendChild(resultItem);
-    });
-}
+// Inicia o quiz ao carregar a página
+startQuiz();

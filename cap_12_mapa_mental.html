@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental Profissional: Vacinas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Even darker background */
+            color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1.5rem;
+        }
+        .container {
+            width: 100%;
+            max-width: 1600px; /* Wider for more details */
+            background-color: #1e293b; /* Dark slate container */
+            border: 1px solid #334151;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3), 0 10px 10px -5px rgba(0,0,0,0.2);
+            padding: 2.5rem;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #f8fafc;
+            text-align: center;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background-color: #1e293b;
+            border-radius: 0.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Mapa Mental: A Muralha da Imunidade</h1>
+        <canvas id="mindMapCanvas"></canvas>
+    </div>
+
+    <script>
+        // --- SETUP ---
+        const canvas = document.getElementById('mindMapCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // --- DATA STRUCTURE WITH DETAILED EXPLANATIONS ---
+        const mindMapData = {
+            text: 'Vacinas',
+            isRoot: true,
+            children: [
+                {
+                    text: 'Tipos de Imunidade',
+                    collapsed: true,
+                    children: [
+                        { text: 'Ativa', explanation: 'O corpo é exposto a um antígeno de forma segura, estimulando a produção de uma memória imunológica duradoura.' },
+                        { text: 'Passiva', explanation: 'Transferência de anticorpos prontos. A proteção é imediata, mas temporária, pois não gera memória própria.' }
+                    ]
+                },
+                {
+                    text: 'Tipos de Vacinas',
+                    collapsed: true,
+                    children: [
+                        { text: 'Vivas Atenuadas', explanation: 'Usa o patógeno "enfraquecido". Imita a infecção real, gerando resposta imune robusta. Ex: Sarampo, BCG.' },
+                        { text: 'Inativadas (Mortas)', explanation: 'Usa o patógeno morto. Estimula a produção de anticorpos, mas exige reforços. Ex: Pólio (Salk), Hepatite A.' },
+                        { text: 'Subunidades', explanation: 'Contém apenas fragmentos purificados (proteínas/polissacarídeos) do patógeno. Muito seguras. Ex: Hepatite B, HPV.' },
+                        { text: 'Toxoides', explanation: 'Usa uma toxina bacteriana inativada para que o corpo aprenda a neutralizá-la. Ex: Tétano, Difteria.' },
+                        { text: 'Genéticas (mRNA)', explanation: 'Fornece um "código genético" para que nossas células produzam o antígeno, gerando forte resposta. Ex: COVID-19.' }
+                    ]
+                },
+                {
+                    text: 'Imunidade de Coletivo',
+                    collapsed: true,
+                    children: [
+                        { text: 'Meta de Cobertura', explanation: 'Superior a 95%. Dificulta a circulação do patógeno, que não encontra hospedeiros suscetíveis.' },
+                        { text: 'Proteção Indireta', explanation: 'A "muralha" de vacinados protege quem não pode se vacinar (bebês, imunossuprimidos).' }
+                    ]
+                },
+                {
+                    text: 'Programas de Vacinação',
+                    collapsed: true,
+                    children: [
+                        { text: 'Objetivos', explanation: 'Controle (reduzir casos), Eliminação (zerar casos numa região) ou Erradicação (eliminar o patógeno do mundo).' },
+                        { text: 'Cadeia de Frio', explanation: 'Sistema de armazenamento e transporte em temperaturas controladas para manter a eficácia da vacina.' },
+                        { text: 'Vigilância', explanation: 'Monitora a doença para avaliar o impacto da vacina e os Eventos Adversos Pós-Vacinação (EAPV).' }
+                    ]
+                },
+                {
+                    text: 'Futuro da Vacinação',
+                    collapsed: true,
+                    children: [
+                        { text: 'Terapêuticas', explanation: 'Projetadas para tratar doenças já existentes, como o câncer, ensinando o sistema imune a atacar tumores.' },
+                        { text: 'Universais', explanation: 'Busca criar uma única vacina contra todos os subtipos de um vírus, como o da gripe (Influenza).' },
+                        { text: 'Novas Vias', explanation: 'Pesquisas em adesivos com microagulhas (indolores) e sprays nasais para melhorar a adesão e a resposta imune.' }
+                    ]
+                }
+            ]
+        };
+
+        let mousePos = { x: -100, y: -100 };
+        const allNodes = [];
+
+        // --- DRAWING FUNCTIONS ---
+
+        // Helper function to wrap text and draw it
+        function wrapText(text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let currentY = y;
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    ctx.fillText(line, x, currentY);
+                    line = words[n] + ' ';
+                    currentY += lineHeight;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.fillText(line, x, currentY);
+        }
+
+        // NEW: Helper function to calculate the required height for wrapped text
+        function getWrappedTextHeight(text, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let lines = 1;
+            if (!text) return 0;
+
+            for (let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > maxWidth && n > 0) {
+                    lines++;
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            return lines * lineHeight;
+        }
+
+        function drawNode(node) {
+            const isHovered = ctx.isPointInPath(node.path, mousePos.x, mousePos.y);
+            
+            // New Professional Dark Theme Palette
+            if (node.isRoot) {
+                ctx.fillStyle = isHovered ? '#b45309' : '#9a3412'; // Amber/Orange
+                ctx.strokeStyle = '#f97316';
+            } else if (node.depth === 1) {
+                 ctx.fillStyle = isHovered ? '#1e40af' : '#1d4ed8'; // Indigo/Blue
+                 ctx.strokeStyle = '#3b82f6';
+            } else {
+                 ctx.fillStyle = isHovered ? '#334155' : '#1e293b'; // Slate Gray
+                 ctx.strokeStyle = '#475569';
+            }
+            
+            ctx.lineWidth = 1.5;
+            ctx.fill(node.path);
+            ctx.stroke(node.path);
+            
+            // --- Text Drawing Logic ---
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            // Main title text
+            let titleText = node.text;
+            if (node.children) {
+                const indicator = node.collapsed ? '[+]' : '[-]';
+                titleText = `${node.text} ${indicator}`;
+            }
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = `600 ${node.depth === 2 ? 15 : 16}px Inter`;
+            const titleY = node.y + 15;
+            const titleX = node.x + node.width / 2;
+            ctx.fillText(titleText, titleX, titleY);
+
+            // Explanation text
+            if(node.explanation) {
+                const separatorY = node.y + 45;
+                // Separator line
+                ctx.beginPath();
+                ctx.moveTo(node.x + 20, separatorY);
+                ctx.lineTo(node.x + node.width - 20, separatorY);
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // Explanation text with wrapping
+                ctx.font = '400 13px Inter';
+                ctx.fillStyle = '#cbd5e1';
+                wrapText(node.explanation, titleX, separatorY + 10, node.width - 30, 18);
+            }
+        }
+
+        function drawLine(fromNode, toNode) {
+            ctx.beginPath();
+            const fromX = fromNode.x + fromNode.width;
+            const fromY = fromNode.y + fromNode.height / 2;
+            const toX = toNode.x;
+            const toY = toNode.y + toNode.height / 2;
+            const midX = fromX + (toX - fromX) / 2;
+
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(midX, fromY);
+            ctx.lineTo(midX, toY);
+            ctx.lineTo(toX, toY);
+            
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        // --- LAYOUT AND MAIN DRAWING LOGIC ---
+
+        function layout(node, depth = 0, y = 0) {
+            const H_SPACING = 280;
+            const V_SPACING = 20;
+            
+            // --- Calculate Node Size Dynamically ---
+            ctx.font = `600 ${node.depth === 2 ? 15 : 16}px Inter`;
+            const indicator = node.children ? ' [+]' : '';
+            const titleWidth = ctx.measureText(node.text + indicator).width;
+            
+            node.width = titleWidth + 50;
+            node.height = 50; 
+            
+            if(node.explanation) {
+                const minWidth = 250;
+                const padding = 30;
+                const titleAreaHeight = 45; // Space for title + top padding
+                const textBottomMargin = 15;
+                const lineHeight = 18;
+
+                node.width = Math.max(node.width, minWidth); 
+                ctx.font = '400 13px Inter';
+                const explanationHeight = getWrappedTextHeight(node.explanation, node.width - padding, lineHeight);
+                node.height = titleAreaHeight + explanationHeight + textBottomMargin;
+            }
+            // --- End Size Calculation ---
+            
+            node.depth = depth;
+            node.x = 20 + depth * H_SPACING;
+            node.y = y;
+            
+            allNodes.push(node);
+            
+            let subtreeHeight = 0;
+            if (node.children && !node.collapsed) {
+                let childY = 0;
+                node.children.forEach(child => {
+                    const childSubtreeHeight = layout(child, depth + 1, y + childY);
+                    childY += childSubtreeHeight + V_SPACING;
+                });
+                subtreeHeight = childY - V_SPACING;
+            }
+            
+            node.subtreeHeight = Math.max(node.height, subtreeHeight);
+            
+            if (node.children && !node.collapsed) {
+                const firstChild = node.children[0];
+                const lastChild = node.children[node.children.length - 1];
+                node.y = firstChild.y + (lastChild.y + lastChild.height - firstChild.y - node.height) / 2;
+            }
+
+            return node.subtreeHeight;
+        }
+
+        function createNodePaths() {
+            allNodes.forEach(node => {
+                const path = new Path2D();
+                const r = 12; // Softer radius
+                path.moveTo(node.x + r, node.y);
+                path.lineTo(node.x + node.width - r, node.y);
+                path.arcTo(node.x + node.width, node.y, node.x + node.width, node.y + r, r);
+                path.lineTo(node.x + node.width, node.y + node.height - r);
+                path.arcTo(node.x + node.width, node.y + node.height, node.x + node.width - r, node.y + node.height, r);
+                path.lineTo(node.x + r, node.y + node.height);
+                path.arcTo(node.x, node.y + node.height, node.x, node.y + node.height - r, r);
+                path.lineTo(node.x, node.y + r);
+                path.arcTo(node.x, node.y, node.x + r, node.y, r);
+                path.closePath();
+                node.path = path;
+            });
+        }
+        
+        function draw() {
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            allNodes.forEach(node => {
+                if (node.children && !node.collapsed) {
+                    node.children.forEach(child => drawLine(node, child));
+                }
+            });
+
+            allNodes.forEach(drawNode);
+        }
+
+        function init() {
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            
+            canvas.width = rect.width * dpr;
+            ctx.scale(dpr, dpr);
+
+            allNodes.length = 0;
+            const totalHeight = layout(mindMapData, 0, 0);
+            
+            const requiredHeight = totalHeight + 40;
+            canvas.height = requiredHeight * dpr;
+            canvas.style.height = `${requiredHeight}px`;
+
+            ctx.scale(dpr, dpr);
+            
+            allNodes.length = 0;
+            layout(mindMapData, 0, 20);
+            
+            createNodePaths(); 
+            draw();
+        }
+
+        // --- EVENT HANDLERS ---
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+
+            let clickedNode = null;
+            for (let i = allNodes.length - 1; i >= 0; i--) {
+                const node = allNodes[i];
+                if (ctx.isPointInPath(node.path, mousePos.x, mousePos.y)) {
+                    clickedNode = node;
+                    break;
+                }
+            }
+
+            if (clickedNode && clickedNode.children) {
+                clickedNode.collapsed = !clickedNode.collapsed;
+                init();
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            draw();
+        });
+        
+        window.addEventListener('resize', init);
+        init();
+
+    </script>
+
+</body>
+</html>

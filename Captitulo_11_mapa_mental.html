@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental Interativo: Vacinas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body{font-family:'Inter',sans-serif;background-color:#0A192F;color:#E6F1FF}
+        .mindmap-node{background-color:#172A46;border:1px solid #304D6D;border-radius:0.75rem;padding:1.5rem;position:relative;transition:transform.2s,box-shadow.2s}
+        .mindmap-node:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,79,255,.1)}
+        .mindmap-node-title{background:linear-gradient(90deg,#87D3F2,#004FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+        .mindmap-section-title{font-size:1.5rem;font-weight:700;color:#38bdf8}
+        .resumo{background:#23304B;color:#cbd5e1;font-size:1.08rem;border-radius:1rem;margin:0 auto 2rem;padding:1.1rem 1.5rem;max-width:760px;box-shadow:0 2px 14px rgba(59,130,246,.09)}
+        @media(max-width:900px){.resumo{font-size:1rem}}
+        /* Ícone de seta animado */
+        .toggle-arrow{transition:transform .3s}
+        .rotate-90{transform:rotate(90deg)}
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-6xl font-black mindmap-node-title">Mapa Mental das Vacinas</h1>
+            <div class="mt-5 mb-8 resumo">
+                <b>Resumo do capítulo:</b><br>
+                Vacinas são ferramentas essenciais para a prevenção de doenças infecciosas, funcionando ao estimular o sistema imunológico a reconhecer e combater agentes patogênicos. Existem diferentes tipos de imunidade (ativa e passiva) e vários tipos de vacinas (vivas atenuadas, inativadas, subunidades, toxoides, genéticas). A imunidade coletiva é alcançada quando alta cobertura vacinal impede a circulação de patógenos. Os programas de vacinação buscam controlar, eliminar ou erradicar doenças, enfrentando desafios como logística da cadeia de frio e vigilância de eventos adversos. Novas tecnologias prometem vacinas mais eficazes e acessíveis para o futuro.
+            </div>
+        </header>
+
+        <!-- SEÇÃO PRINCIPAL -->
+        <div id="mapa-container" class="space-y-10">
+            <!-- Estrutura será injetada via JS -->
+        </div>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Mapa mental interativo para fins educacionais.</p>
+        </footer>
+    </div>
+
+    <!-- Modal de explicação -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden" onclick="toggleModal(false)">
+        <div id="modal-content" class="mindmap-node w-full max-w-xl max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold text-white"></h3>
+                <button onclick="toggleModal(false)" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="modal-body" class="text-gray-300 leading-relaxed"></div>
+        </div>
+    </div>
+
+<script>
+/** Dados estruturados */
+const mindMap = [
+  {
+    titulo: 'Tipos de Imunidade',
+    subtitulos: [
+      {titulo:'Imunidade Ativa',texto:'O corpo é exposto a um antígeno de forma segura, estimulando a produção de uma memória imunológica duradoura.'},
+      {titulo:'Imunidade Passiva',texto:'Transferência de anticorpos prontos. A proteção é imediata, mas temporária, pois não gera memória própria.'}
+    ]
+  },
+  {
+    titulo: 'Tipos de Vacinas',
+    subtitulos: [
+      {titulo:'Vivas Atenuadas',texto:'Usa o patógeno "enfraquecido". Imita a infecção real, gerando resposta imune robusta. Ex: Sarampo, BCG.'},
+      {titulo:'Inativadas (Mortas)',texto:'Usa o patógeno morto. Estimula a produção de anticorpos, mas exige reforços. Ex: Pólio (Salk), Hepatite A.'},
+      {titulo:'Subunidades',texto:'Contém apenas fragmentos purificados do patógeno. Muito seguras. Ex: Hepatite B, HPV.'},
+      {titulo:'Toxoides',texto:'Usa toxina bacteriana inativada para que o corpo aprenda a neutralizá-la. Ex: Tétano, Difteria.'},
+      {titulo:'Genéticas (mRNA)',texto:'Fornece um "código genético" para que nossas células produzam o antígeno. Ex: COVID-19.'}
+    ]
+  },
+  {
+    titulo: 'Imunidade de Coletivo',
+    subtitulos: [
+      {titulo:'Meta de Cobertura',texto:'Superior a 95%. Dificulta a circulação do patógeno, que não encontra hospedeiros suscetíveis.'},
+      {titulo:'Proteção Indireta',texto:'A "muralha" de vacinados protege quem não pode se vacinar (bebês, imunossuprimidos).'}
+    ]
+  },
+  {
+    titulo: 'Programas de Vacinação',
+    subtitulos: [
+      {titulo:'Objetivos',texto:'Controle (reduzir casos), Eliminação (zerar casos numa região) ou Erradicação (eliminar o patógeno do mundo).'},
+      {titulo:'Cadeia de Frio',texto:'Sistema de armazenamento e transporte em temperaturas controladas para manter a eficácia da vacina.'},
+      {titulo:'Vigilância',texto:'Monitora a doença para avaliar o impacto da vacina e os Eventos Adversos Pós-Vacinação (EAPV).'}
+    ]
+  },
+  {
+    titulo: 'Futuro da Vacinação',
+    subtitulos: [
+      {titulo:'Terapêuticas',texto:'Projetadas para tratar doenças existentes, como o câncer, ensinando o sistema imune a atacar tumores.'},
+      {titulo:'Universais',texto:'Busca criar uma única vacina contra todos os subtipos de um vírus, como o da gripe.'},
+      {titulo:'Novas Vias',texto:'Pesquisas em adesivos com microagulhas e sprays nasais para melhorar a adesão.'}
+    ]
+  }
+];
+
+const container = document.getElementById('mapa-container');
+
+/** Monta HTML */
+function renderMap(){
+  mindMap.forEach((sec,idx)=>{
+    // Título da seção
+    const h2 = document.createElement('h2');
+    h2.className='mindmap-section-title flex items-center gap-2';
+    h2.innerHTML=`<span>${idx+1}. ${sec.titulo}</span>`;
+    container.appendChild(h2);
+
+    // Nó principal clicável
+    const nodePrincipal = document.createElement('div');
+    nodePrincipal.className='mindmap-node flex items-center justify-between cursor-pointer';
+    nodePrincipal.setAttribute('data-index',idx);
+    nodePrincipal.innerHTML=`<span class="font-bold text-xl">${sec.titulo}</span><svg class="w-6 h-6 toggle-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>`;
+    container.appendChild(nodePrincipal);
+
+    // Contêiner dos subtítulos
+    const subContainer=document.createElement('div');
+    subContainer.className='space-y-6 pl-6 border-l border-blue-700 mt-4 hidden';
+
+    sec.subtitulos.forEach(sub=>{
+      const subNode=document.createElement('div');
+      subNode.className='mindmap-node cursor-pointer';
+      subNode.setAttribute('data-titulo',sub.titulo);
+      subNode.setAttribute('data-texto',sub.texto);
+      subNode.innerHTML=`<h3 class="text-lg font-bold mb-1 text-white">${sub.titulo}</h3><p class="text-gray-400 text-sm">Clique para saber mais</p>`;
+      subContainer.appendChild(subNode);
+    });
+    container.appendChild(subContainer);
+  });
+}
+
+renderMap();
+
+/** Interatividade */
+container.addEventListener('click',e=>{
+  const principal=e.target.closest('.mindmap-node[data-index]');
+  if(principal){
+    const arrow = principal.querySelector('.toggle-arrow');
+    const next=principal.nextElementSibling;
+    if(next.classList.contains('hidden')){
+      next.classList.remove('hidden');arrow.classList.add('rotate-90');
+    }else{
+      next.classList.add('hidden');arrow.classList.remove('rotate-90');
+    }
+    return;
+  }
+  const sub=e.target.closest('.mindmap-node[data-titulo]');
+  if(sub){
+    const titulo=sub.getAttribute('data-titulo');
+    const texto=sub.getAttribute('data-texto');
+    document.getElementById('modal-title').textContent=titulo;
+    document.getElementById('modal-body').textContent=texto;
+    toggleModal(true);
+  }
+});
+
+function toggleModal(show){
+  const modal=document.getElementById('modal');
+  if(show) modal.classList.remove('hidden');
+  else modal.classList.add('hidden');
+}
+</script>
+</body>
+</html>

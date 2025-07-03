@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Mental Interativo: Capítulo 12 – O Universo Oculto das Bactérias</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body{font-family:'Inter',sans-serif;background-color:#0A192F;color:#E6F1FF}
+        .mindmap-node{background-color:#172A46;border:1px solid #304D6D;border-radius:0.75rem;padding:1.5rem;position:relative;transition:transform.2s,box-shadow.2s}
+        .mindmap-node:hover{transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,79,255,.1)}
+        .mindmap-node-title{background:linear-gradient(90deg,#87D3F2,#004FFF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+        .mindmap-section-title{font-size:1.5rem;font-weight:700;color:#38bdf8}
+        .resumo{background:#23304B;color:#cbd5e1;font-size:1.08rem;border-radius:1rem;margin:0 auto 2rem;padding:1.1rem 1.5rem;max-width:760px;box-shadow:0 2px 14px rgba(59,130,246,.09)}
+        @media(max-width:900px){.resumo{font-size:1rem}}
+        /* Ícone de seta animado */
+        .toggle-arrow{transition:transform .3s}
+        .rotate-90{transform:rotate(90deg)}
+    </style>
+</head>
+<body class="antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-6xl font-black mindmap-node-title">Mapa Mental: Capítulo 12 – O Universo Oculto das Bactérias</h1>
+            <div class="mt-5 mb-8 resumo">
+                <b>Resumo do capítulo:</b><br>
+                Bem-vindo ao estudo das bactérias, as formas de vida mais antigas, abundantes e metabolicamente diversas do nosso planeta. Mais do que simples germes, elas são mestras da adaptação, participando de ciclos biogeoquímicos essenciais, aplicações biotecnológicas e desafiando nossa compreensão dos limites da vida. Neste capítulo, exploraremos sua classificação, estrutura celular e mecanismos de replicação.
+            </div>
+        </header>
+
+        <div id="mapa-container" class="space-y-10"></div>
+
+        <footer class="text-center mt-16 pt-8 border-t border-gray-700">
+            <p class="text-gray-500">Mapa mental interativo para fins educacionais.</p>
+        </footer>
+    </div>
+
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 hidden" onclick="toggleModal(false)">
+        <div id="modal-content" class="mindmap-node w-full max-w-xl max-h-[80vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold text-white"></h3>
+                <button onclick="toggleModal(false)" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="modal-body" class="text-gray-300 leading-relaxed"></div>
+        </div>
+    </div>
+
+<script>
+const mindMap = [
+  {
+    titulo: 'A Grande Divisão da Vida: Células Procarióticas vs. Eucarióticas',
+    subtitulos: [
+      { titulo: 'Distinção Fundamental', texto: 'Procarióticas: arquitetura simples, sem núcleo definido. Eucarióticas: compartimentalização e organelas especializadas.' },
+      { titulo: 'Importância da Diferença', texto: 'Compreender essa divisão é essencial para estudar singularidades bacterianas e desenvolver antibióticos seletivos.' },
+      { titulo: 'Ribossomos e Antibióticos', texto: 'Diferença entre ribossomos 70S (bactérias) e 80S (eucariotos) é alvo crítico para antibióticos seletivos.' }
+    ]
+  },
+  {
+    titulo: 'A Arte de Classificar: Colocando Ordem no Reino Bacteriano',
+    subtitulos: [
+      { titulo: 'Morfologia e Arranjo', texto: 'Cocos (diplococos, estreptococos, estafilococos), Bacilos, Espirais, Vibriões, Filamentosas e Pleomórficas.' },
+      { titulo: 'Coloração de Gram', texto: 'Gram-positivas: parede espessa de peptidoglicano com ácidos teicóicos (roxo). Gram-negativas: parede fina e membrana externa com LPS (rosa).' },
+      { titulo: 'Critérios Moleculares', texto: 'Sequenciamento do rRNA 16S para filogenia e identificação de transferência horizontal de genes.' }
+    ]
+  },
+  {
+    titulo: 'A Arquitetura da Célula Bacteriana',
+    subtitulos: [
+      { titulo: 'Membrana Plasmática', texto: 'Barreira seletiva e local de geração de energia.' },
+      { titulo: 'Parede Celular', texto: 'Peptidoglicano (NAG-NAM). Gram-positivas têm ácidos teicóicos; Gram-negativas têm membrana externa com LPS (endotoxina).' },
+      { titulo: 'Cápsula (Glicocálice)', texto: 'Camada gelatinosa de polissacarídeos que protege contra fagocitose.' },
+      { titulo: 'Flagelos, Fímbrias e Pili', texto: 'Flagelos para motilidade; fímbrias para adesão; pili para conjugação (F-pilus).' },
+      { titulo: 'Endósporos', texto: 'Estruturas resistentes que germinam em condições favoráveis (Bacillus, Clostridium).' }
+    ]
+  },
+  {
+    titulo: 'Replicação e Ciclo de Vida',
+    subtitulos: [
+      { titulo: 'Fissão Binária', texto: 'Iniciação (oriC), elongação com forquilhas de replicação, segregação cromossômica, septação via anel Z de FtsZ e síntese de nova parede.' },
+      { titulo: 'Regulação e Controle de Qualidade', texto: 'Sistema Min (MinCDE) impede septo nos polos; proteína SlmA evita divisão antes da segregação completa do DNA.' },
+      { titulo: 'Esporulação', texto: 'Formação de endósporo em condições de estresse, garantindo sobrevivência em ambientes adversos.' }
+    ]
+  },
+  {
+    titulo: 'Aplicações Clínicas e Biotecnológicas',
+    subtitulos: [
+      { titulo: 'Desenvolvimento de Antibióticos', texto: 'β-lactâmicos, quinolonas, macrolídeos e aminoglicosídeos exploram diferenças entre procariotos e eucariotos.' },
+      { titulo: 'Diagnóstico Laboratorial', texto: 'Testes de catalase, oxidase, coagulase e fermentação de açúcares para identificação de espécies.' },
+      { titulo: 'Controle de Infecções', texto: 'Esterilização (autoclave, radiação) e desinfecção química para destruir bactérias e esporos.' },
+      { titulo: 'Biotecnologia', texto: 'Uso de E. coli como fábrica de insulina, hormônios, vacinas e enzimas industriais.' }
+    ]
+  },
+  {
+    titulo: 'Ferramentas de Estudo e Memorização',
+    subtitulos: [
+      { titulo: 'Mapas Conceituais', texto: 'Crie conexões visuais entre termos como LPS, endotoxina e choque séptico.' },
+      { titulo: 'Tabela Comparativa', texto: 'Detalhe diferenças entre Gram-positivas, Gram-negativas e bacilos álcool-ácido resistentes.' },
+      { titulo: 'Mnemônicos', texto: 'Frases para lembrar fases da esporulação e tipos de tolerância ao oxigênio.' }
+    ]
+  },
+  {
+    titulo: 'Desafios de Revisão e Análise Clínica',
+    subtitulos: [
+      { titulo: 'Conceitual', texto: 'Por que a penicilina é eficaz contra Gram-positivas e não contra Gram-negativas?' },
+      { titulo: 'Mecanismo de Ação', texto: 'Qual estrutura bacteriana seria alvo ideal para um novo antibiótico?' },
+      { titulo: 'Desafio Clínico 1', texto: 'Botulismo: relação entre endósporo e intoxicação alimentar em enlatados.' },
+      { titulo: 'Desafio Clínico 2', texto: 'Abscesso cutâneo com cocos em cachos: gênero provável e teste de coagulase.' }
+    ]
+  }
+];
+
+const container = document.getElementById('mapa-container');
+
+function renderMap() {
+  mindMap.forEach((sec, idx) => {
+    const h2 = document.createElement('h2');
+    h2.className = 'mindmap-section-title flex items-center gap-2';
+    h2.innerHTML = `<span>${idx+1}. ${sec.titulo}</span>`;
+    container.appendChild(h2);
+
+    const nodePrincipal = document.createElement('div');
+    nodePrincipal.className = 'mindmap-node flex items-center justify-between cursor-pointer';
+    nodePrincipal.setAttribute('data-index', idx);
+    nodePrincipal.innerHTML = `<span class="font-bold text-xl">${sec.titulo}</span>
+      <svg class="w-6 h-6 toggle-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>`;
+    container.appendChild(nodePrincipal);
+
+    const subContainer = document.createElement('div');
+    subContainer.className = 'space-y-6 pl-6 border-l border-blue-700 mt-4 hidden';
+
+    sec.subtitulos.forEach(sub => {
+      const subNode = document.createElement('div');
+      subNode.className = 'mindmap-node cursor-pointer';
+      subNode.setAttribute('data-titulo', sub.titulo);
+      subNode.setAttribute('data-texto', sub.texto);
+      subNode.innerHTML = `<h3 class="text-lg font-bold mb-1 text-white">${sub.titulo}</h3>
+        <p class="text-gray-400 text-sm">Clique para saber mais</p>`;
+      subContainer.appendChild(subNode);
+    });
+
+    container.appendChild(subContainer);
+  });
+}
+
+renderMap();
+
+container.addEventListener('click', e => {
+  const principal = e.target.closest('.mindmap-node[data-index]');
+  if (principal) {
+    const arrow = principal.querySelector('.toggle-arrow');
+    const next = principal.nextElementSibling;
+    if (next.classList.contains('hidden')) { next.classList.remove('hidden'); arrow.classList.add('rotate-90'); }
+    else { next.classList.add('hidden'); arrow.classList.remove('rotate-90'); }
+    return;
+  }
+  const sub = e.target.closest('.mindmap-node[data-titulo]');
+  if (sub) {
+    document.getElementById('modal-title').textContent = sub.getAttribute('data-titulo');
+    document.getElementById('modal-body').textContent = sub.getAttribute('data-texto');
+    toggleModal(true);
+  }
+});
+
+function toggleModal(show) {
+  const modal = document.getElementById('modal');
+  if (show) modal.classList.remove('hidden'); else modal.classList.add('hidden');
+}
+</script>
+</body>
+</html>

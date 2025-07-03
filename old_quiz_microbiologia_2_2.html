@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: A Muralha da Imunidade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .quiz-container {
+            max-width: 700px;
+            width: 90%;
+        }
+        /* Custom styles for the correct answer button */
+        .answer-btn.correct {
+            background-color: #10b981; /* emerald-500 */
+            color: white;
+            border-color: #059669; /* emerald-600 */
+            transform: scale(1.02);
+        }
+        /* Custom styles for the incorrect answer button */
+        .answer-btn.incorrect {
+            background-color: #f43f5e; /* rose-500 */
+            color: white;
+            border-color: #e11d48; /* rose-600 */
+        }
+        /* Styles for disabled buttons */
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen py-10">
+
+    <div id="quiz" class="quiz-container bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 md:p-8 transition-all duration-500">
+        
+        <div class="text-center mb-6">
+            <div class="inline-block p-3 bg-blue-100 dark:bg-blue-900/50 rounded-full mb-4">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547a2 2 0 00-.547 1.806l.443 2.216a2 2 0 002.216.443l.477-2.387a6 6 0 003.86-.517l.318-.158a6 6 0 013.86-.517l2.387.477a2 2 0 002.216-.443l.443-2.216a2 2 0 00-.547-1.806z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 012 2v1a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1a2 2 0 012-2z" />
+                 </svg>
+            </div>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Quiz de Imunologia</h1>
+            <p class="text-slate-500 dark:text-slate-400 mt-1">Teste seus conhecimentos sobre vacinas.</p>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-6">
+          <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-out"></div>
+        </div>
+
+        <div id="question-container">
+            <p id="question-counter" class="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-2">PERGUNTA 1 / 10</p>
+            <h2 id="question-text" class="text-lg md:text-xl font-semibold text-slate-700 dark:text-slate-200 mb-6 min-h-[80px]">Carregando pergunta...</h2>
+            <div id="answer-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Botões de resposta serão inseridos aqui via JS -->
+            </div>
+        </div>
+
+        <div id="controls" class="mt-8 flex justify-end">
+            <button id="next-btn" class="hidden bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">Próxima</button>
+        </div>
+        
+        <!-- Explanation Footer -->
+        <div id="explanation-footer" class="hidden mt-6 p-4 bg-rose-50 dark:bg-rose-900/30 border-l-4 border-rose-500 rounded-r-lg">
+            <p class="font-bold text-rose-800 dark:text-rose-200">Explicação:</p>
+            <p id="explanation-text" class="text-rose-700 dark:text-rose-300"></p>
+        </div>
+
+        <div id="results-container" class="hidden text-center py-8">
+             <h2 class="text-3xl font-bold text-slate-800 dark:text-white mb-4">Quiz Finalizado!</h2>
+             <p id="score-text" class="text-xl text-slate-600 dark:text-slate-300 mb-8">Você acertou X de Y perguntas.</p>
+             <button id="restart-btn" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300">Recomeçar Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Qual é a principal vantagem das vacinas de vírus vivos atenuados em comparação com as vacinas inativadas?",
+                answers: [
+                    { text: "Podem ser administradas a indivíduos imunossuprimidos com segurança.", correct: false, rationale: "Indivíduos imunossuprimidos não devem receber vacinas de vírus vivos, pois o patógeno enfraquecido pode causar a doença." },
+                    { text: "Induzem uma imunidade mais robusta e duradoura, semelhante à infecção natural.", correct: true, rationale: "Como o patógeno se replica minimamente, ele imita uma infecção real, gerando uma forte e duradoura resposta imune." },
+                    { text: "Não requerem uma cadeia de frio para armazenamento.", correct: false, rationale: "As vacinas de vírus vivos atenuados são geralmente sensíveis ao calor e exigem uma cadeia de frio rigorosa." },
+                    { text: "São compostas apenas por fragmentos do patógeno, eliminando qualquer risco de infecção.", correct: false, rationale: "Esta descrição corresponde às vacinas de subunidades. As vacinas de vírus vivos contêm o patógeno inteiro, embora enfraquecido." }
+                ]
+            },
+            {
+                question: "Qual das seguintes doenças foi a única doença humana erradicada globalmente graças à vacinação?",
+                answers: [
+                    { text: "Poliomielite", correct: false, rationale: "A poliomielite foi eliminada em muitas regiões, mas ainda não foi erradicada globalmente." },
+                    { text: "Sarampo", correct: false, rationale: "O sarampo é uma doença controlável por vacina, mas surtos ainda ocorrem e ela não foi erradicada." },
+                    { text: "Varíola", correct: true, rationale: "A OMS declarou a varíola erradicada em 1980, um sucesso monumental da vacinação em massa." },
+                    { text: "Tétano", correct: false, rationale: "O tétano é controlado, mas não pode ser erradicado porque a bactéria está presente no ambiente (solo)." }
+                ]
+            },
+            {
+                question: "O que é a imunidade de coletivo (ou de rebanho)?",
+                answers: [
+                    { text: "A transferência de anticorpos de mãe para filho durante a gravidez.", correct: false, rationale: "Isso descreve a imunidade passiva natural, que é temporária." },
+                    { text: "A proteção indireta de indivíduos suscetíveis quando uma alta porcentagem da população está imune.", correct: true, rationale: "A alta cobertura vacinal dificulta a circulação do patógeno, protegendo indiretamente os não vacinados." },
+                    { text: "A imunidade adquirida após a recuperação de uma infecção natural.", correct: false, rationale: "Isso é imunidade ativa natural, que contribui para a imunidade de rebanho, mas não a define." },
+                    { text: "Um tipo de vacina que contém anticorpos de vários doadores.", correct: false, rationale: "A administração de anticorpos prontos é uma forma de imunização passiva artificial." }
+                ]
+            },
+            {
+                question: "Para qual situação a imunização passiva é mais indicada?",
+                answers: [
+                    { text: "Para gerar memória imunológica de longo prazo antes de uma viagem.", correct: false, rationale: "A imunização passiva não gera memória imunológica; para isso, a imunização ativa (vacina) é necessária." },
+                    { text: "Para a erradicação global de doenças infecciosas.", correct: false, rationale: "A erradicação depende da imunidade duradoura e da memória imunológica fornecidas pela imunização ativa." },
+                    { text: "Para fornecer proteção rápida e imediata após a exposição a um patógeno, como a raiva.", correct: true, rationale: "A ação rápida dos anticorpos pré-formados é crucial em situações de pós-exposição para neutralizar o patógeno." },
+                    { text: "Para substituir a necessidade de vacinas de reforço em adultos.", correct: false, rationale: "A proteção da imunização passiva é de curta duração, ao contrário dos reforços, que fortalecem a memória imunológica." }
+                ]
+            },
+            {
+                question: "As vacinas de mRNA (genéticas), como algumas usadas para a COVID-19, funcionam de que maneira?",
+                answers: [
+                    { text: "Injetando o vírus inteiro, mas quimicamente 'morto'.", correct: false, rationale: "Isso descreve o mecanismo das vacinas inativadas." },
+                    { text: "Utilizando uma toxina bacteriana inativada para ensinar o corpo a neutralizá-la.", correct: false, rationale: "Este é o mecanismo das vacinas toxoides (ex: tétano)." },
+                    { text: "Introduzindo o patógeno enfraquecido que se replica minimamente no corpo.", correct: false, rationale: "Este é o princípio das vacinas de vírus vivos atenuados." },
+                    { text: "Fornecendo um código genético para que as células do próprio corpo produzam o antígeno viral.", correct: true, rationale: "O mRNA funciona como uma 'receita' que instrui nossas células a fabricar a proteína do patógeno, estimulando a resposta imune." }
+                ]
+            },
+            {
+                question: "Qual é o principal desafio logístico associado às vacinas de mRNA?",
+                answers: [
+                    { text: "A necessidade de administração por via oral.", correct: false, rationale: "Elas são administradas por via intramuscular." },
+                    { text: "O alto custo de produção dos adjuvantes.", correct: false, rationale: "Embora a tecnologia seja nova, o desafio mais proeminente é o armazenamento." },
+                    { text: "A manutenção de uma cadeia de frio com temperaturas extremamente baixas (ultracongelamento).", correct: true, rationale: "O mRNA é uma molécula instável que requer armazenamento em temperaturas de até -80°C para não se degradar." },
+                    { text: "O risco de causar a doença em pacientes imunossuprimidos.", correct: false, rationale: "Este é um risco associado a vacinas de vírus vivos atenuados, não às de mRNA." }
+                ]
+            },
+            {
+                question: "Por que um paciente recebendo quimioterapia (imunossuprimido) não deve receber a vacina contra o sarampo (vírus vivo atenuado)?",
+                answers: [
+                    { text: "Porque a vacina pode ser inativada pelos medicamentos da quimioterapia.", correct: false, rationale: "A preocupação principal não é a inativação da vacina, mas a incapacidade do sistema imune de controlar o vírus." },
+                    { text: "Porque o patógeno atenuado na vacina pode se replicar sem controle e causar a doença.", correct: true, rationale: "Num sistema imune deficiente, o vírus vacinal enfraquecido pode multiplicar-se e levar à doença que deveria prevenir." },
+                    { text: "Porque as vacinas de vírus vivos causam reações alérgicas graves nesses pacientes.", correct: false, rationale: "O risco principal é a infecção pelo vírus vacinal, não alergias." },
+                    { text: "Porque a vacina não seria eficaz, já que o corpo não produziria anticorpos.", correct: false, rationale: "Embora a resposta possa ser subótima, a principal razão da contraindicação é a segurança." }
+                ]
+            },
+            {
+                question: "Qual é a meta de cobertura vacinal que a maioria dos programas de imunização busca para atingir a imunidade de coletivo?",
+                answers: [
+                    { text: "Superior a 50%", correct: false, rationale: "Esta cobertura é insuficiente para interromper a circulação da maioria dos patógenos." },
+                    { text: "Superior a 75%", correct: false, rationale: "Ainda pode não ser suficiente para doenças altamente contagiosas como o sarampo." },
+                    { text: "Superior a 95%", correct: true, rationale: "Esta alta cobertura é a meta para a maioria das vacinas, pois dificulta a circulação do patógeno, protegendo a todos." },
+                    { text: "Exatamente 100%", correct: false, rationale: "Alcançar 100% é logisticamente impossível e não é estritamente necessário para a imunidade de coletivo." }
+                ]
+            },
+            {
+                question: "As vacinas toxoides, como a do tétano e da difteria, protegem o indivíduo de que forma?",
+                answers: [
+                    { text: "Impedindo a bactéria de se multiplicar no corpo.", correct: false, rationale: "A vacina não impede a colonização pela bactéria, mas neutraliza seus efeitos tóxicos." },
+                    { text: "Ensinando o sistema imune a reconhecer e neutralizar a toxina produzida pela bactéria.", correct: true, rationale: "O corpo aprende a produzir anticorpos contra a toxina inativada (toxoide), ficando preparado para neutralizar a toxina real." },
+                    { text: "Apresentando o patógeno inteiro, mas morto, para o sistema imune.", correct: false, rationale: "Esta é a descrição de uma vacina inativada." },
+                    { text: "Fornecendo anticorpos prontos contra a toxina.", correct: false, rationale: "Isso seria imunização passiva (soro), usada para tratamento, não para prevenção de longo prazo." }
+                ]
+            },
+            {
+                question: "Qual das seguintes opções representa uma futura direção na pesquisa de vacinas mencionada no texto?",
+                answers: [
+                    { text: "Vacinas que usam patógenos mortos para aumentar a segurança.", correct: false, rationale: "Vacinas de patógenos mortos (inativadas) já são uma tecnologia estabelecida." },
+                    { text: "Vacinas terapêuticas, projetadas para tratar doenças como o câncer.", correct: true, rationale: "O texto menciona as vacinas terapêuticas como uma fronteira futura, ensinando o sistema imune a atacar células tumorais." },
+                    { text: "Vacinas que precisam ser administradas anualmente.", correct: false, rationale: "O objetivo da inovação é criar vacinas mais duradouras, como as universais." },
+                    { text: "Vacinas que requerem aplicação exclusivamente intramuscular.", correct: false, rationale: "O futuro da pesquisa inclui novas vias de administração, como sprays nasais e adesivos." }
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const questionContainer = document.getElementById('question-container');
+        const questionText = document.getElementById('question-text');
+        const questionCounter = document.getElementById('question-counter');
+        const answerButtons = document.getElementById('answer-buttons');
+        const nextBtn = document.getElementById('next-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreText = document.getElementById('score-text');
+        const restartBtn = document.getElementById('restart-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const explanationFooter = document.getElementById('explanation-footer');
+        const explanationText = document.getElementById('explanation-text');
+
+        // Quiz State
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            questionContainer.parentElement.querySelector('.text-center').classList.remove('hidden');
+            progressBar.parentElement.classList.remove('hidden');
+            questionContainer.classList.remove('hidden');
+            resultsContainer.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.innerText = currentQuestion.question;
+            questionCounter.innerText = `PERGUNTA ${currentQuestionIndex + 1} / ${questions.length}`;
+
+            // Update Progress Bar
+            const progressPercentage = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer.text;
+                button.classList.add('answer-btn', 'w-full', 'p-4', 'border-2', 'rounded-lg', 'text-left', 'transition-all', 'duration-300', 'text-slate-700', 'dark:text-slate-300', 'border-gray-300', 'dark:border-slate-600', 'hover:bg-blue-50', 'dark:hover:bg-slate-700', 'hover:border-blue-400', 'dark:hover:border-blue-500');
+                
+                button.dataset.correct = answer.correct;
+                button.dataset.rationale = answer.rationale;
+                button.addEventListener('click', selectAnswer);
+                
+                answerButtons.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            nextBtn.classList.add('hidden');
+            explanationFooter.classList.add('hidden');
+            while (answerButtons.firstChild) {
+                answerButtons.removeChild(answerButtons.firstChild);
+            }
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const isCorrect = selectedBtn.dataset.correct === "true";
+
+            if (isCorrect) {
+                score++;
+            } else {
+                explanationText.innerText = selectedBtn.dataset.rationale;
+                explanationFooter.classList.remove('hidden');
+                selectedBtn.classList.add('incorrect');
+            }
+            
+            Array.from(answerButtons.children).forEach(button => {
+                if (button.dataset.correct === "true") {
+                    button.classList.add('correct');
+                }
+                button.disabled = true;
+            });
+            
+            const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        function showResults() {
+            questionContainer.parentElement.querySelector('.text-center').classList.add('hidden');
+            progressBar.parentElement.classList.add('hidden');
+            questionContainer.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            resultsContainer.classList.remove('hidden');
+            scoreText.innerText = `Você acertou ${score} de ${questions.length} perguntas.`;
+        }
+
+        function handleNextButton() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        nextBtn.addEventListener('click', handleNextButton);
+        restartBtn.addEventListener('click', startQuiz);
+
+        // Start the quiz when the page loads
+        startQuiz();
+    </script>
+</body>
+</html>
